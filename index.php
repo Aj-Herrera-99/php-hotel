@@ -41,6 +41,8 @@ $hotels = [
 ];
 
 $parking = $_GET["parking"] ?? "false";
+$vote = (int) ($_GET["vote"] ?? 1);
+
 
 ?>
 
@@ -60,24 +62,31 @@ $parking = $_GET["parking"] ?? "false";
 <body>
     <h1>Hotels</h1>
 
-    <form action="./index.php" method="get">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="parking" value="true" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
-                Only hotels with parking
-            </label>
-        </div>
+    <div class="container">
+        <form class="row w-50 mx-auto g-3 border p-4 rounded-3" action="./index.php" method="get">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="parking" value="true" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Only hotels with parking
+                </label>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <!-- <select class="form-select" aria-label="Default select example">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-        </select> -->
-    </form>
+            <div>
+                <label for="select">Hotel vote</label>
+                <select id="select" class="form-select" aria-label="Default select example" name="vote">
+                    <option selected value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                    <option value="5">5</option>
 
-    <table class="table table-striped">
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <table class="table table-striped container">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -90,9 +99,7 @@ $parking = $_GET["parking"] ?? "false";
         </thead>
         <tbody>
             <?php
-            echo $parking;
-
-            $hotels_filtered;
+            $hotels_filtered = [];
 
             if ($parking == "true") {
                 $hotels_filtered = array_filter($hotels, function ($hot) {
@@ -102,13 +109,17 @@ $parking = $_GET["parking"] ?? "false";
                 $hotels_filtered = array_filter($hotels);
             }
 
+            $hotels_filtered = array_filter($hotels_filtered, function ($hot) use ($vote) {
+                return $hot["vote"] >= $vote;
+            });
+
             // var_dump($hotels_filtered);
 
             $counter = 1;
             foreach ($hotels_filtered as $hotel) {
                 echo '<tr><th scope="row">' . $counter . '</th>';
                 foreach ($hotel as $key => $val) {
-                    if (gettype($val) == "boolean") {
+                    if ($key == "parking") {
                         if ($val == true) {
                             echo "<td>&#10004;</td>";
                         } else {
