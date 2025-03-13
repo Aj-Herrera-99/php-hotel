@@ -1,7 +1,5 @@
 <?php
-
 $hotels = [
-
     [
         'name' => 'Hotel Belvedere',
         'description' => 'Hotel Belvedere Descrizione',
@@ -37,13 +35,7 @@ $hotels = [
         'vote' => 2,
         'distance_to_center' => 50
     ],
-
 ];
-
-$parking = $_GET["parking"] ?? "false";
-$vote = (int) ($_GET["vote"] ?? 1);
-
-
 ?>
 
 <!DOCTYPE html>
@@ -62,34 +54,31 @@ $vote = (int) ($_GET["vote"] ?? 1);
 <body>
     <h1>Hotels</h1>
 
-    <div class="container">
-        <form class="row w-50 mx-auto g-3 border p-4 rounded-3" action="./index.php" method="get">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="parking" value="true" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Only hotels with parking
-                </label>
-            </div>
+    <form class="row w-50 mx-auto g-3 border p-4 rounded-3" action="./index.php" method="get">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="parking" value="true" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Only hotels with parking
+            </label>
+        </div>
 
-            <div>
-                <label for="select">Hotel vote</label>
-                <select id="select" class="form-select" aria-label="Default select example" name="vote">
-                    <option selected value="1">1+</option>
-                    <option value="2">2+</option>
-                    <option value="3">3+</option>
-                    <option value="4">4+</option>
-                    <option value="5">5</option>
+        <div>
+            <label for="select">Hotel vote</label>
+            <select id="select" class="form-select" aria-label="Default select example" name="vote">
+                <option selected value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+                <option value="5">5</option>
 
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
     <table class="table table-striped container">
         <thead>
             <tr>
-                <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
                 <th scope="col">Parking</th>
@@ -99,38 +88,29 @@ $vote = (int) ($_GET["vote"] ?? 1);
         </thead>
         <tbody>
             <?php
-            $hotels_filtered = [];
-
-            if ($parking == "true") {
-                $hotels_filtered = array_filter($hotels, function ($hot) {
-                    return $hot["parking"] == true;
-                });
-            } else {
-                $hotels_filtered = array_filter($hotels);
-            }
-
-            $hotels_filtered = array_filter($hotels_filtered, function ($hot) use ($vote) {
-                return $hot["vote"] >= $vote;
+            // parametri query string e null coalescing
+            $parking = $_GET["parking"] ?? "false";
+            $vote = (int) ($_GET["vote"] ?? 1);
+            
+            // filtro hotel in base a parcheggio (se true) e voto
+            // uso di use per accedere a var globali nella cb anonima della filter method
+            $hotels_filtered = array_filter($hotels, function ($hotel) use ($vote, $parking) {
+                return $parking == "true"
+                    ? $hotel["parking"] == true && $hotel["vote"] >= $vote
+                    : $hotel["vote"] >= $vote;
             });
 
-            // var_dump($hotels_filtered);
-
-            $counter = 1;
+            // stampa hotel filtrati in righe di tabella
             foreach ($hotels_filtered as $hotel) {
-                echo '<tr><th scope="row">' . $counter . '</th>';
+                echo "<tr>";
                 foreach ($hotel as $key => $val) {
                     if ($key == "parking") {
-                        if ($val == true) {
-                            echo "<td>&#10004;</td>";
-                        } else {
-                            echo "<td>&#10008;</td>";
-                        }
+                        echo $val == true ? "<td>&#10004;</td>" : "<td>&#10008;</td>";
                     } else {
                         echo "<td>$val</td>";
                     }
                 }
                 echo "</tr>";
-                $counter++;
             }
             ?>
         </tbody>
