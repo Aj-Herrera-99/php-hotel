@@ -40,6 +40,8 @@ $hotels = [
 
 ];
 
+$parking = $_GET["parking"] ?? "false";
+
 ?>
 
 <!DOCTYPE html>
@@ -58,14 +60,23 @@ $hotels = [
 <body>
     <h1>Hotels</h1>
 
-    <?php
-    foreach ($hotels as $hotel) {
-        foreach ($hotel as $key => $val) {
-            echo "$key: $val - ";
-        }
-        echo "<br>";
-    }
-    ?>
+    <form action="./index.php" method="get">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="parking" value="true" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+                Only hotels with parking
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <!-- <select class="form-select" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select> -->
+    </form>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -79,8 +90,22 @@ $hotels = [
         </thead>
         <tbody>
             <?php
+            echo $parking;
+
+            $hotels_filtered;
+
+            if ($parking == "true") {
+                $hotels_filtered = array_filter($hotels, function ($hot) {
+                    return $hot["parking"] == true;
+                });
+            } else {
+                $hotels_filtered = array_filter($hotels);
+            }
+
+            // var_dump($hotels_filtered);
+
             $counter = 1;
-            foreach ($hotels as $hotel) {
+            foreach ($hotels_filtered as $hotel) {
                 echo '<tr><th scope="row">' . $counter . '</th>';
                 foreach ($hotel as $key => $val) {
                     if (gettype($val) == "boolean") {
