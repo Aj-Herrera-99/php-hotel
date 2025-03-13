@@ -83,7 +83,15 @@ $hotels = [
             foreach ($hotels as $hotel) {
                 echo '<tr><th scope="row">' . $counter . '</th>';
                 foreach ($hotel as $key => $val) {
-                    echo "<td>$val</td>";
+                    if (gettype($val) == "boolean") {
+                        if ($val == true) {
+                            echo "<td>&#10004;</td>";
+                        } else {
+                            echo "<td>&#10008;</td>";
+                        }
+                    } else {
+                        echo "<td>$val</td>";
+                    }
                 }
                 echo "</tr>";
                 $counter++;
