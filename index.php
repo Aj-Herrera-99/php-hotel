@@ -60,12 +60,37 @@ $hotels = [
 
     <?php
     foreach ($hotels as $hotel) {
-        foreach ($hotel as $key => $val){
+        foreach ($hotel as $key => $val) {
             echo "$key: $val - ";
         }
         echo "<br>";
     }
     ?>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Parking</th>
+                <th scope="col">Vote</th>
+                <th scope="col">Distance to center</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $counter = 1;
+            foreach ($hotels as $hotel) {
+                echo '<tr><th scope="row">' . $counter . '</th>';
+                foreach ($hotel as $key => $val) {
+                    echo "<td>$val</td>";
+                }
+                echo "</tr>";
+                $counter++;
+            }
+            ?>
+        </tbody>
+    </table>
 
 </body>
 
